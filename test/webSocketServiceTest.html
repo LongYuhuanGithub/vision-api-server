@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+  <title>WebSocketDemo</title>
+</head>
+<body>
+<button id="connect">连接服务器</button>
+<button id="send" disabled>发送数据</button><br>
+<script>
+  const connect = document.getElementById('connect')
+  const send = document.getElementById('send')
+  let ws = null
+
+  // 连接服务器
+  connect.addEventListener('click', () => {
+    ws = new WebSocket('ws://localhost:9999')
+    ws.onopen = () => {
+      console.log('连接服务器成功')
+      send.disabled = false
+    }
+    ws.onclose = () => {
+      console.log('连接服务器失败或服务器关闭')
+      send.disabled = true
+    }
+    ws.onmessage = msg => console.log('服务器发送过来的数据', JSON.parse(msg.data))
+  })
+
+  // 发送数据
+  send.addEventListener('click', () => {
+    ws.send(JSON.stringify({ // 测试获取指定图表数据
+      action: 'getData',
+      socketType: 'trendData',
+      chartName: 'trend',
+      value: ''
+    }))
+
+    // ws.send(JSON.stringify({ // 测试全屏事件
+    //   action: 'fullScreen',
+    //   socketType: 'fullScreen',
+    //   chartName: 'trend',
+    //   value: true
+    // }))
+
+    // ws.send(JSON.stringify({ // 测试切换主题事件
+    //   action: 'themeChange',
+    //   socketType: 'themeChange',
+    //   chartName: '',
+    //   value: 'chalk'
+    // }))
+  })
+</script>
+</body>
+</html>
